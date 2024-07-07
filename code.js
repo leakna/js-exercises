@@ -1,7 +1,6 @@
 
-
 var fs = require('fs');
-exercise1
+//exercise1
 function squareNumber(number){
   return number*number
 }
@@ -14,7 +13,7 @@ function map(array,callback){
 }
 console.log(map([1,2,3],squareNumber))
 
-exercise2
+//exercise2
 function filterNumber(number){
   return (number%2==0)
 }
@@ -28,11 +27,11 @@ function filter(array,callback){
 
 console.log(filter([1,2,3,4,5],filterNumber))
 
-exercise3
+//exercise3
 
 function readFile(filepath){
   return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(data,err)=>{
+    fs.readFile(filepath,'utf-8',(err,data)=>{
       if(err)
         reject(err)
       else
@@ -45,16 +44,16 @@ async function read(filepath,callback){
     return await callback('file/'+filepath)
   }
   catch(error){
-    return error
+    throw error
   }
 }
-read('file.txt',readFile).then(data=>{
+read('fileee.txt',readFile).then(data=>{
   console.log(data)
 }).catch(err=>{
-  console.log(err)
+  console.log("Error:",err)
 })
 
-exercise4
+//exercise4
 
 function writeFile(filepath,content){
   return new Promise((resolve,reject)=>{
