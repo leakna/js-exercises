@@ -39,7 +39,7 @@ return {name:element.name};
 
 console.log(["2024-01-01", "2024-02-02", "2024-04-04"].map((element)=>{
   let date=element.split('-');
-  return date[2]+'-'+date[1]+'-'+date[0];
+  return date[2]+'/'+date[1]+'/'+date[0];
 }))
 
 //exercise5
