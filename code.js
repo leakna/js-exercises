@@ -1,136 +1,60 @@
-
-var fs = require('fs');
 //exercise1
-function squareNumber(number){
-  return number*number
-}
-function map(array,callback){
-  let squareArr=[]
-  array.forEach(element => {
-    squareArr.push(callback(element));
-  });
-  return squareArr
-}
-console.log(map([1,2,3],squareNumber))
+
+var color=["Red" , "Blue", "Green"]
+let [red,,blue]=color
+console.log(red,blue)
 
 //exercise2
-function filterNumber(number){
-  return (number%2==0)
-}
-function filter(array,callback){
-  let filterArray=[]
-  array.forEach(element => {
-    (callback(element))?filterArray.push(element):null
-  });
-  return filterArray
-}
 
-console.log(filter([1,2,3,4,5],filterNumber))
+const {name,age}={name: "Alice", age: 25, job: "Developer"}
+console.log(name,age)
 
 //exercise3
 
-function readFile(filepath){
-  return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve(data)
-    })
-  })
-}
-async function read(filepath,callback){
-  try{
-    return await callback('file/'+filepath)
+const {address:{street,city}}={
+  id: 1,
+  name: "Sok",
+  address: {
+    street: "123 Main St",
+    city: "PP"
   }
-  catch(error){
-    throw error
-  }
-}
-read('fileee.txt',readFile).then(data=>{
-  console.log(data)
-}).catch(err=>{
-  console.log("Error:",err)
-})
+};
+console.log(street,city)
 
 //exercise4
 
-function writeFile(filepath,content){
-  return new Promise((resolve,reject)=>{
-    fs.writeFile(filepath,content,(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve('Writing is successful')
-    })
-  })
-}
-function write(filepath,content,callback){
-  callback('file/'+filepath,content).then((data)=>{console.log(data)})
-  .catch(err=>{
-    console.log(err)
-  })
-}
-write('write.txt','hello world',writeFile)
+let Nums1 = [1, 2, 3]
+let Nums2 = [4, 5, 6]
+let merge=[...Nums1,...Nums2]
+console.log(merge)
 
 //exercise5
-function readFile(filepath){
-  return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve(data)
-    })
+
+function sumAll(...params){
+  let sum=0
+  params.forEach(element=>{
+    sum+=element
   })
+  return sum
 }
-function appendFile(filepath,content){
-  return new Promise((resolve,reject)=>{
-    fs.appendFile(filepath,"\n"+content,(err)=>{
-      if(err)
-        reject(err)
-      else
-        resolve('File is appending')
-    })
-  })
-}
-async function fileOperator(filepath,content,callback){
-  filepath='file/'+filepath
-  if(content){
-      callback(filepath,content).then(message=>{
-          console.log(message)
-      }).catch(err=>{
-        console.log(err)
-      })
+console.log(sumAll(1,2))
+console.log(sumAll(1,2,3,4,5))
 
+//exercise6
+
+let points = [{x: 1, y:2}, {x:2, y:3}, {x:3, y:4}]
+const [firstPoint,...otherPoints]=points
+console.log(firstPoint,otherPoints)
+
+//exercise7
+function filterProps(object,...rest){
+  let newObj={}
+  for(let key in object){
+    if(!rest.includes(key))
+      newObj[key]=object[key]
   }
-   else{
-      
-    try{
-      
-      return await callback(filepath)
-    }
-    catch(err){
-        throw err;
-    }
-   }
+  return newObj 
 }
-
-(async () => {
-  try {
-    let data = await fileOperator('input.txt', '', readFile);
-    console.log("Data from input.txt:", data);
-
-    await fileOperator('output1.txt', data, appendFile);
-    data = await fileOperator('output1.txt', '', readFile);
-    console.log("Data from output1.txt:", data);
-
-    await fileOperator('output2.txt', data, appendFile);
-    data = await fileOperator('output2.txt', '', readFile); // This line will throw an error
-    console.log("Data from output2.txt:", data);
-
-  } catch (err) {
-    console.error('catch:', err);
-  }
-})();
+let  object = {a:1, b:2, c:3, d:4}
+console.log(filterProps(object, "b", "d"))
 
