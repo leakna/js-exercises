@@ -1,1 +1,1 @@
-this is input.txt
+hello

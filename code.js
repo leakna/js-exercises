@@ -1,82 +1,54 @@
+///exercise1
 
-var fs = require('fs');
-//exercise1
-function squareNumber(number){
-  return number*number
-}
-function map(array,callback){
-  let squareArr=[]
-  array.forEach(element => {
-    squareArr.push(callback(element));
-  });
-  return squareArr
-}
-console.log(map([1,2,3],squareNumber))
+const dataObj=[{id: 1, name: "sok"}, {id: 2, name: "sao"},{id: 3, name: "pisey"}]
+function getUserInfo(data,id,callback){
+  let foundData={}
+  setTimeout(()=>{
+    data.forEach(element => {
+      if(element.id==id)
+        foundData=element
+    });
+    if(foundData)
+      callback(null,foundData)
 
-//exercise2
-function filterNumber(number){
-  return (number%2==0)
+    else
+      callback('data not found',null)
+  },2000)
 }
-function filter(array,callback){
-  let filterArray=[]
-  array.forEach(element => {
-    (callback(element))?filterArray.push(element):null
-  });
-  return filterArray
+function capitalizeName(obj,callback){
+  setTimeout(()=>{
+    obj.name=obj.name[0].toUpperCase()+obj.name.slice(1)
+    callback(obj)
+  },1500)
 }
 
-console.log(filter([1,2,3,4,5],filterNumber))
-
-//exercise3
-
-function readFile(filepath){
-  return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve(data)
-    })
+getUserInfo(dataObj,1,(error,data)=>{
+  if(error){
+    console.log(error)
+    return 
+  }
+  capitalizeName(data,(data)=>{
+    console.log(data)
   })
-}
-async function read(filepath,callback){
-  try{
-    return await callback('file/'+filepath)
-  }
-  catch(error){
-    throw error
-  }
-}
-read('fileee.txt',readFile).then(data=>{
-  console.log(data)
-}).catch(err=>{
-  console.log("Error:",err)
+  getUserInfo(dataObj,2,(error,data)=>{
+    if(error){
+      console.log(error)
+      return 
+    }
+    capitalizeName(data,(data)=>{
+      console.log(data)
+    })
+
+  })
+
 })
 
-//exercise4
+const fs=require('fs')
+//exercise2
 
-function writeFile(filepath,content){
-  return new Promise((resolve,reject)=>{
-    fs.writeFile(filepath,content,(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve('Writing is successful')
-    })
-  })
-}
-function write(filepath,content,callback){
-  callback('file/'+filepath,content).then((data)=>{console.log(data)})
-  .catch(err=>{
-    console.log(err)
-  })
-}
-write('write.txt','hello world',writeFile)
-
-//exercise5
 function readFile(filepath){
   return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
+    fs.readFile("file/"+filepath,'utf-8',(err,data)=>{ 
       if(err)
         reject(err)
       else
@@ -86,51 +58,68 @@ function readFile(filepath){
 }
 function appendFile(filepath,content){
   return new Promise((resolve,reject)=>{
-    fs.appendFile(filepath,"\n"+content,(err)=>{
+    fs.appendFile("file/"+filepath,content,(err)=>{
       if(err)
         reject(err)
-      else
-        resolve('File is appending')
+      else{
+        console.log("Appending successful")
+        resolve()
+      }
     })
   })
 }
-async function fileOperator(filepath,content,callback){
-  filepath='file/'+filepath
-  if(content){
-      callback(filepath,content).then(message=>{
-          console.log(message)
-      }).catch(err=>{
-        console.log(err)
-      })
 
-  }
-   else{
-      
-    try{
-      
-      return await callback(filepath)
-    }
-    catch(err){
-        throw err;
-    }
-   }
+function writeFile(filepath,content){
+  return new Promise((resolve,reject)=>{
+    fs.writeFile("file/"+filepath,content,(err,data)=>{
+      if(err)
+        reject(err)
+      else{
+        console.log("Adding successful")
+        resolve()
+      }
+    })
+  })
 }
 
-(async () => {
-  try {
-    let data = await fileOperator('input.txt', '', readFile);
-    console.log("Data from input.txt:", data);
+readFile('input.txt').then(data=>{
+  console.log(data)
+  return appendFile('output1.txt',data+' First modification')
+})
+.then(()=>{
+  return readFile('output1.txt')
+})
+.then((data)=>{
+  console.log(data)
+  return appendFile('output2.txt',data+' second modification')
+})
+.then(()=>{
+  return readFile('output2.txt')
+})
+.then(data=>{
+  console.log(data)
+}).catch(err=>{
+  console.log('Error:',err)
+})
 
-    await fileOperator('output1.txt', data, appendFile);
-    data = await fileOperator('output1.txt', '', readFile);
-    console.log("Data from output1.txt:", data);
 
-    await fileOperator('output2.txt', data, appendFile);
-    data = await fileOperator('output2.txt', '', readFile); // This line will throw an error
-    console.log("Data from output2.txt:", data);
 
-  } catch (err) {
-    console.error('catch:', err);
+//exercise3
+
+async function operateAscyn(){
+  try{
+    let dataFromFile=await readFile('input.txt') 
+    console.log(dataFromFile)
+    await appendFile('output1.txt',dataFromFile+' First modification')
+    dataFromFile=await readFile('output1.txt')
+    console.log(dataFromFile)
+    await appendFile('output2.txt',dataFromFile+' second modification')
+    dataFromFile=await readFile('output2.txt')
+    console.log(dataFromFile)
+    
   }
-})();
-
+  catch(err){
+    console.log(err)
+  }
+}
+operateAscyn()
