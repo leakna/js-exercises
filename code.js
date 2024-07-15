@@ -1,136 +1,155 @@
-
-var fs = require('fs');
 //exercise1
-function squareNumber(number){
-  return number*number
-}
-function map(array,callback){
-  let squareArr=[]
-  array.forEach(element => {
-    squareArr.push(callback(element));
-  });
-  return squareArr
-}
-console.log(map([1,2,3],squareNumber))
-
-//exercise2
-function filterNumber(number){
-  return (number%2==0)
-}
-function filter(array,callback){
-  let filterArray=[]
-  array.forEach(element => {
-    (callback(element))?filterArray.push(element):null
-  });
-  return filterArray
-}
-
-console.log(filter([1,2,3,4,5],filterNumber))
-
-//exercise3
-
-function readFile(filepath){
-  return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve(data)
-    })
-  })
-}
-async function read(filepath,callback){
-  try{
-    return await callback('file/'+filepath)
+class Library{
+  #books;
+  #name;
+  constructor(name,books){
+    this.#name=name;
+    this.#books=books;
+   
   }
-  catch(error){
-    throw error
+  get name(){
+    return this.#name
   }
-}
-read('fileee.txt',readFile).then(data=>{
-  console.log(data)
-}).catch(err=>{
-  console.log("Error:",err)
-})
-
-//exercise4
-
-function writeFile(filepath,content){
-  return new Promise((resolve,reject)=>{
-    fs.writeFile(filepath,content,(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve('Writing is successful')
-    })
-  })
-}
-function write(filepath,content,callback){
-  callback('file/'+filepath,content).then((data)=>{console.log(data)})
-  .catch(err=>{
-    console.log(err)
-  })
-}
-write('write.txt','hello world',writeFile)
-
-//exercise5
-function readFile(filepath){
-  return new Promise((resolve,reject)=>{
-    fs.readFile(filepath,'utf-8',(err,data)=>{
-      if(err)
-        reject(err)
-      else
-        resolve(data)
-    })
-  })
-}
-function appendFile(filepath,content){
-  return new Promise((resolve,reject)=>{
-    fs.appendFile(filepath,"\n"+content,(err)=>{
-      if(err)
-        reject(err)
-      else
-        resolve('File is appending')
-    })
-  })
-}
-async function fileOperator(filepath,content,callback){
-  filepath='file/'+filepath
-  if(content){
-      callback(filepath,content).then(message=>{
-          console.log(message)
-      }).catch(err=>{
-        console.log(err)
-      })
-
+  get books(){
+    return this.#books
   }
-   else{
-      
-    try{
-      
-      return await callback(filepath)
+  //exercise2
+  addBook(newBook){
+    this.#books.push(newBook); 
+  }
+  removeBook(title,isbn){
+    let index=this.#books.findIndex(book=>book.title===title || book.isbn===isbn)
+    if(index>-1){
+      this.#books.splice(index,1);
     }
-    catch(err){
-        throw err;
-    }
-   }
+  }
+  searchBook(title,author,genre){
+    return this.#books.filter(book=>(book.title==title||book.author==author)||book.genre==genre)
+  }
+  displayList(){
+    let availableBooks=this.#books.filter((book)=>book.available)
+    let forOuput='[\n'
+    availableBooks.forEach(book => {
+      forOuput=forOuput+book.toString()});
+    forOuput+=']'
+    console.log(forOuput)
+  }
 }
 
-(async () => {
-  try {
-    let data = await fileOperator('input.txt', '', readFile);
-    console.log("Data from input.txt:", data);
-
-    await fileOperator('output1.txt', data, appendFile);
-    data = await fileOperator('output1.txt', '', readFile);
-    console.log("Data from output1.txt:", data);
-
-    await fileOperator('output2.txt', data, appendFile);
-    data = await fileOperator('output2.txt', '', readFile); // This line will throw an error
-    console.log("Data from output2.txt:", data);
-
-  } catch (err) {
-    console.error('catch:', err);
+class Book{
+  #title
+  #author
+  #genre
+  #available
+  constructor(title, author, genre,available ){
+    this.#title=title;
+    this.#author=author;
+    this.#genre=genre;
+    this.#available=available;
   }
-})();
+  get title(){
+    return this.#title
+  }
+  get author(){
+    return this.#author
+  }
+  get genre(){
+    return this.#genre
+  }
+  get available(){
+    return this.#available
+  }
+  //exercise3
+  borrow(){
+    if(this.#available){
+      this.#available=false;
+    }
+    else{
+      console.log('sorry this book is already borrowed')
+    } 
+  }
+  return(){
+    if(!this.#available)
+      this.#available=true;
+    else
+      console.log('this book is already returned')
+  }
+  toString() {
+    return `{Title: ${this.#title}, Author: ${this.#author}, Genre: ${this.#genre}, Available: ${this.#available}}\n`;
+  }
 
+}
+
+class User{
+  #name
+  #borrowedBooks
+  constructor(name, borrowedBooks){
+    this.#name=name;
+    this.#borrowedBooks=borrowedBooks
+  }
+  get name(){
+    return this.#name
+  }
+  get borrowedBooks(){
+    return this.#borrowedBooks
+  }
+  
+  borrowBook(book){
+    if(book){
+      if(book&&book.available){
+        this.#borrowedBooks.push(book);
+        book.borrow()
+      }
+      else{
+        console.log('sorry this book is already borrowed')
+      }
+    }
+    else
+      console.log('There is no such book')
+  }
+  viewBook(){
+    let forOuput='[\n'
+    this.#borrowedBooks.forEach(book=>forOuput+=book.toString())
+    forOuput+=']'
+    console.log(forOuput)
+  }
+}
+class Student extends User{
+  constructor(name, borrowedBooks){
+    super(name, borrowedBooks);
+  }
+  borrowBook(book){
+    if(this.borrowedBooks.length<5){
+      super.borrowBook(book)
+    }
+    else
+    console.log('You can borrow only 5 books')
+  }
+}
+class Admin extends User{
+  constructor(name, borrowedBooks){
+    super(name, borrowedBooks);
+  }
+  borrowBook(book){
+    super.borrowBook(book)
+  }
+
+}
+
+//instance
+let library=new Library("Library A",[new Book('hary','a','magic',true),
+  new Book('hary2','2','magic',false)
+]);
+library.addBook(new Book('hary3','3','magic',true))
+library.removeBook('hary',null);
+library.displayList()
+
+let student=new Student('user1',[new Book('hary2','3','magic',true),new Book('hary3','3','magic',true)
+  ,new Book('hary3','3','magic',true),
+  new Book('hary3','3','magic',true),
+])
+student.borrowBook(library.searchBook('hary2',null,null)[0])
+student.viewBook()
+let admin=new Admin('user1',[new Book('hary','3','magic',true)
+])
+admin.viewBook()

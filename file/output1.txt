@@ -1,2 +1,0 @@
-output1.txt
-this is input.txt
