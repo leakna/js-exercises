@@ -12,7 +12,7 @@ class Library{
   }
   get books(){
     return this.#books
-  }
+  }  
   //exercise2
   addBook(newBook){
     this.#books.push(newBook); 
@@ -23,8 +23,8 @@ class Library{
       this.#books.splice(index,1);
     }
   }
-  searchBook(title,author,genre){
-    return this.#books.filter(book=>(book.title==title||book.author==author)||book.genre==genre)
+  searchBook(forSearch){
+    return this.#books.filter(book=>(book.title==forSearch||book.author==forSearch)||book.genre==forSearch)
   }
   displayList(){
     let availableBooks=this.#books.filter((book)=>book.available)
@@ -64,15 +64,10 @@ class Book{
     if(this.#available){
       this.#available=false;
     }
-    else{
-      console.log('sorry this book is already borrowed')
-    } 
   }
   return(){
     if(!this.#available)
       this.#available=true;
-    else
-      console.log('this book is already returned')
   }
   toString() {
     return `{Title: ${this.#title}, Author: ${this.#author}, Genre: ${this.#genre}, Available: ${this.#available}}\n`;
@@ -123,7 +118,7 @@ class Student extends User{
       super.borrowBook(book)
     }
     else
-    console.log('You can borrow only 5 books')
+      console.log('You can borrow only 5 books')
   }
 }
 class Admin extends User{
@@ -143,12 +138,11 @@ let library=new Library("Library A",[new Book('hary','a','magic',true),
 library.addBook(new Book('hary3','3','magic',true))
 library.removeBook('hary',null);
 library.displayList()
-
 let student=new Student('user1',[new Book('hary2','3','magic',true),new Book('hary3','3','magic',true)
   ,new Book('hary3','3','magic',true),
   new Book('hary3','3','magic',true),
 ])
-student.borrowBook(library.searchBook('hary2',null,null)[0])
+student.borrowBook(library.searchBook('hary2')[0])
 student.viewBook()
 let admin=new Admin('user1',[new Book('hary','3','magic',true)
 ])
